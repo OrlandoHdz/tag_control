@@ -107,98 +107,112 @@ class _RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<_RegisterForm> {
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController ctrlBoleto = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     // final textStyles = Theme.of(context).textTheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: Column(
-        children: [
-          // const SizedBox( height: 50 ),
-          // Text('Nuevo registro', style: textStyles.titleMedium ),
-          const SizedBox(height: 50),
-
-          // const CustomTextFormField(
-          //   label: 'Número de boleto o TAG',
-          //   keyboardType: TextInputType.number,
-          // ),
-          // const SizedBox(height: 30),
-
-
-          Row(
-            
-            children: [
-              Expanded(
-                  child: CustomTextFormField(
-                control: ctrlBoleto,
-                label: 'Número de boleto o TAG',
-                keyboardType: TextInputType.number,
-              )),
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 50),
+        child: Column(
+          children: [
+            // const SizedBox( height: 50 ),
+            // Text('Nuevo registro', style: textStyles.titleMedium ),
+            const SizedBox(height: 50),
+    
+            // const CustomTextFormField(
+            //   label: 'Número de boleto o TAG',
+            //   keyboardType: TextInputType.number,
+            // ),
+            // const SizedBox(height: 30),
+    
+    
+            Row(
               
-              const SizedBox(width: 10,),
+              children: [
+                Expanded(
+                    child: CustomTextFormField(
+                  control: ctrlBoleto,
+                  label: 'Número de boleto o TAG',
+                  keyboardType: TextInputType.number,
+                  validator: ( value ) {
+                    if (value == null || value.isEmpty) return 'Campo requerido';
+                    if (value.trim().isEmpty) return 'Campo requerido';
+                    return null;
+                  },
 
-              SizedBox.fromSize(
-                size: const Size(56, 56),
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.amberAccent,
-                    child: InkWell(
-                      splashColor: Colors.green,
-                      onTap: escanearCodigo,
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(Icons.qr_code_scanner),
-                        ],
+                )),
+                
+                const SizedBox(width: 10,),
+    
+                SizedBox.fromSize(
+                  size: const Size(56, 56),
+                  child: ClipOval(
+                    child: Material(
+                      color: Colors.amberAccent,
+                      child: InkWell(
+                        splashColor: Colors.green,
+                        onTap: escanearCodigo,
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.qr_code_scanner),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
+                )
+              ],
+            ),
+    
+            const SizedBox(height: 30),
+    
+            // const CustomTextFormField(
+            //   label: 'Número TAG',
+            //   keyboardType: TextInputType.number,
+            // ),
+            // const SizedBox( height: 30 ),
+    
+            SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: CustomFilledButton(
+                  text: 'Buscar',
+                  buttonColor: Colors.black,
+                  onPressed: () {
 
-          const SizedBox(height: 30),
+                    final isValid = _formKey.currentState!.validate();
+                    if (!isValid) return;
 
-          // const CustomTextFormField(
-          //   label: 'Número TAG',
-          //   keyboardType: TextInputType.number,
-          // ),
-          // const SizedBox( height: 30 ),
-
-          SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: CustomFilledButton(
-                text: 'Buscar',
-                buttonColor: Colors.black,
-                onPressed: () {
-                  Navigator.pushNamed(context, '/consultar');
-                },
-              )),
-
-
-
-
-
-          const Spacer(flex: 2),
-
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     const Text('¿Ya tienes cuenta?'),
-          //     TextButton(
-          //       onPressed: (){},
-          //       child: const Text('Ingresa aquí')
-          //     )
-          //   ],
-          // ),
-
-          // const Spacer( flex: 1),
-        ],
+                    Navigator.pushNamed(context, '/consultar');
+                  },
+                )),
+    
+    
+    
+    
+    
+            const Spacer(flex: 2),
+    
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     const Text('¿Ya tienes cuenta?'),
+            //     TextButton(
+            //       onPressed: (){},
+            //       child: const Text('Ingresa aquí')
+            //     )
+            //   ],
+            // ),
+    
+            // const Spacer( flex: 1),
+          ],
+        ),
       ),
     );
   }

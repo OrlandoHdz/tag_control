@@ -9,6 +9,7 @@ class DatosConsulta {
 }
 
 const datDatosConsulta = <DatosConsulta>[
+  DatosConsulta(titulo: "Abordo", valor: "22/06/2023 11:23:24 hrs.", icon: Icons.calendar_month_outlined),
   DatosConsulta(titulo: "Número de Boleto", valor: "1400009", icon: Icons.credit_card),
   DatosConsulta(titulo: "Número de TAG", valor: "TAG-20230516-1210-23472", icon: Icons.tag),
   DatosConsulta(titulo: "Asiento", valor: "J16", icon: Icons.chair),

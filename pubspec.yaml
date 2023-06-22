@@ -23,3 +23,5 @@ flutter:
 
   assets:
     - google_fonts/montserrat_alternates/
+    - google_fonts/roboto/
+    

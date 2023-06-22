@@ -96,6 +96,7 @@ class _RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<_RegisterForm> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController ctrlBoleto = TextEditingController();
   TextEditingController ctlTag = TextEditingController();
 
@@ -103,30 +104,78 @@ class _RegisterFormState extends State<_RegisterForm> {
   Widget build(BuildContext context) {
     final textStyles = Theme.of(context).textTheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: Column(
-        children: [
-          const SizedBox(height: 50),
-          Text('Nuevo registro', style: textStyles.titleMedium),
-          const SizedBox(height: 50),
-          Row(
-            children: [
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 50),
+        child: Column(
+          children: [
+            const SizedBox(height: 50),
+            Text('Nuevo registro', style: textStyles.titleMedium),
+            const SizedBox(height: 50),
+            Row(
+              children: [
+                Expanded(
+                    child: CustomTextFormField(
+                  control: ctrlBoleto,
+                  label: 'Número de boleto',
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Campo requerido';
+                    if (value.trim().isEmpty) return 'Campo requerido';
+                    return null;
+                  },
+                )),
+                const SizedBox(
+                  width: 10,
+                ),
+                SizedBox.fromSize(
+                  size: const Size(56, 56),
+                  child: ClipOval(
+                    child: Material(
+                      color: Colors.amberAccent,
+                      child: InkWell(
+                        splashColor: Colors.green,
+                        onTap: escanearCodigoBoleto,
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.qr_code_scanner),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 30),
+            Row(children: [
               Expanded(
-                  child: CustomTextFormField(
-                control: ctrlBoleto,
-                label: 'Número de boleto',
-                keyboardType: TextInputType.number,
-              )),
-              const SizedBox(width: 10,),
+                child: CustomTextFormField(
+                  control: ctlTag,
+                  label: 'Número TAG',
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Campo requerido';
+                    if (value.trim().isEmpty) return 'Campo requerido';
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
               SizedBox.fromSize(
                 size: const Size(56, 56),
                 child: ClipOval(
                   child: Material(
-                    color: Colors.amberAccent,
+                    color: Colors.blueAccent,
                     child: InkWell(
                       splashColor: Colors.green,
-                      onTap: escanearCodigoBoleto,
+                      onTap: escanearCodigoTag,
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -137,84 +186,72 @@ class _RegisterFormState extends State<_RegisterForm> {
                   ),
                 ),
               )
-            ],
-          ),
-          const SizedBox(height: 30),
-          Row(children: [
-            Expanded(
-              child: CustomTextFormField(
-                control: ctlTag,
-                label: 'Número TAG',
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            const SizedBox(width: 10,),
-            SizedBox.fromSize(
-              size: const Size(56, 56),
-              child: ClipOval(
-                child: Material(
-                  color: Colors.blueAccent,
-                  child: InkWell(
-                    splashColor: Colors.green,
-                    onTap: escanearCodigoTag,
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.qr_code_scanner),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            )
-          ]),
-          const SizedBox(height: 30),
-          SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: CustomFilledButton(
-                text: 'Registrar',
-                buttonColor: Colors.black,
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => AlertDialog(
-                            title: const Text(" ¿Estás seguro?"),
-                            content: const Text(
-                                "Se registraran los datos en la plataforma realizando el match entre el número de boleto con el tag"),
-                            actions: [
-                              TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text("Cancelar")),
-                              FilledButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    ctrlBoleto.clear();
-                                    ctlTag.clear();
+            ]),
+            const SizedBox(height: 30),
+            SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: CustomFilledButton(
+                  text: 'Registrar',
+                  buttonColor: Colors.black,
+                  onPressed: () {
+                    final isValid = _formKey.currentState!.validate();
+                    if (!isValid) return;
 
+                    ctrlBoleto.clear();
+                    ctlTag.clear();
 
-                                    final snackBar = SnackBar(
-                                                duration: const Duration(seconds: 4),
-                                                content: const Text('Registro guradado con exito'),
-                                                action: SnackBarAction(
-                                                  label: 'Cerrar',
-                                                  onPressed: () {
-                                                    // Some code to undo the change.
-                                                  },
-                                                ),
-                                              );
+                    const snackBar = SnackBar(
+                      duration: Duration(seconds: 2),
+                      content: Text('Registro guradado con exito'),
+                      // action: SnackBarAction(
+                      //   label: 'Cerrar',
+                      //   onPressed: () {
+                      //     // Some code to undo the change.
+                      //   },
+                    );
 
-                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                    
-                                  },
-                                  child: const Text("Aceptar"))
-                            ],
-                          ));
-                },
-              )),
-          const Spacer(flex: 2),
-        ],
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                    // showDialog(
+                    //     context: context,
+                    //     barrierDismissible: false,
+                    //     builder: (context) => AlertDialog(
+                    //           title: const Text(" ¿Estás seguro?"),
+                    //           content: const Text(
+                    //               "Se registraran los datos en la plataforma realizando el match entre el número de boleto con el tag"),
+                    //           actions: [
+                    //             TextButton(
+                    //                 onPressed: () => Navigator.pop(context),
+                    //                 child: const Text("Cancelar")),
+                    //             FilledButton(
+                    //                 onPressed: () {
+                    //                   Navigator.pop(context);
+                    //                   ctrlBoleto.clear();
+                    //                   ctlTag.clear();
+
+                    //                   final snackBar = SnackBar(
+                    //                               duration: const Duration(seconds: 4),
+                    //                               content: const Text('Registro guradado con exito'),
+                    //                               action: SnackBarAction(
+                    //                                 label: 'Cerrar',
+                    //                                 onPressed: () {
+                    //                                   // Some code to undo the change.
+                    //                                 },
+                    //                               ),
+                    //                             );
+
+                    //                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                    //                 },
+                    //                 child: const Text("Aceptar"))
+                    //           ],
+                    //         ));
+                  },
+                )),
+            const Spacer(flex: 2),
+          ],
+        ),
       ),
     );
   }
@@ -244,7 +281,4 @@ class _RegisterFormState extends State<_RegisterForm> {
 
     setState(() => ctlTag.text = resultado);
   }
-
-
-
 }
